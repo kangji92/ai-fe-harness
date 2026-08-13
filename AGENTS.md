@@ -22,6 +22,12 @@
 4. 테스트 보강 → `npm test`
 5. 자기 리뷰 (`standards/code-review.md` 체크리스트)
 
+## 실행 에이전트 루프
+
+`scripts/agent-generate.mjs`는 이 표준을 실제로 구동하는 루프다: Claude가 `standards/`를 읽고
+`submit_files` 도구로 파일을 제출하면, 하네스가 `vitest`로 검증하고 실패 시 로그를 되돌려
+자가 수정을 반복한다. `npm run agent -- <Name> "<요구사항>"` (ANTHROPIC_API_KEY 필요).
+
 ## 품질 루프
 
 정적 분석(SonarQube · ESLint) 결과를 `prompts/quality-loop.md` 형식으로 에이전트에 넘겨

@@ -25,7 +25,8 @@ ai-fe-harness/
 │  └─ code-review.md
 ├─ prompts/               # 재사용 프롬프트 (컴포넌트·테스트·품질 루프)
 ├─ templates/component/   # 표준을 반영한 스캐폴드 템플릿
-├─ scripts/scaffold.mjs   # 표준을 코드로 강제하는 스캐폴더 (하네스 엔트리포인트)
+├─ scripts/scaffold.mjs   # 표준을 강제하는 결정적 스캐폴더
+├─ scripts/agent-generate.mjs  # 실행 에이전트 루프 (Claude 호출 → 생성 → 테스트 → 자가수정)
 ├─ src/components/        # 하네스 산출물 예시 (Button = 확장본 / Card = 원본 출력)
 └─ .github/workflows/     # CI — 생성된 테스트 자동 검증
 ```
@@ -48,6 +49,27 @@ npm run scaffold -- MyComponent   # 컴포넌트 + 테스트 + index 생성
 npm test                          # 검증
 ```
 
+## 실행 에이전트 (Agentic Loop)
+
+스캐폴더가 "결정적 골격 생성"이라면, **에이전트 루프**는 실제로 Claude를 호출해
+표준을 읽고 **요구사항까지 반영·검증·자가수정**한다.
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+npm run agent -- Badge "상태를 색상으로 표시하는 배지. variant: success | warning | danger."
+```
+
+내부 흐름:
+
+1. `standards/`(Markdown 표준)를 시스템 프롬프트로 주입
+2. Claude(`claude-opus-4-8`)가 `submit_files` **도구 호출**로 파일을 제출 (구조화 출력 강제)
+3. 생성 파일을 기록하고 **`vitest run`으로 즉시 검증**
+4. 실패하면 테스트 로그를 모델에 되돌려 **최대 3회까지 자가 수정**
+5. 통과하면 종료
+
+> 표준(`standards/`) · 프롬프트 · 스캐폴더 · **실행 루프**가 한 저장소에서 맞물려,
+> "AI 코드 생성"을 문서가 아니라 **검증되는 파이프라인**으로 만든다.
+
 ## 이 하네스가 증명하는 것
 
 - **Markdown 기반 개발 표준 수립** — `standards/`, `AGENTS.md`
@@ -69,6 +91,7 @@ npm test                          # 검증
 
 ## 로드맵
 
+- [x] 실행 에이전트 루프 (스펙 → 생성 → 테스트 → 자가수정)
 - [ ] Storybook 스토리 자동 생성 템플릿
 - [ ] Playwright E2E 시나리오 생성 프롬프트
 - [ ] SonarQube 리포트 → AI 개선 PR 자동화 스크립트
