@@ -1,5 +1,7 @@
 # AI Front-end Harness
 
+[![CI](https://github.com/kangji92/ai-fe-harness/actions/workflows/ci.yml/badge.svg)](https://github.com/kangji92/ai-fe-harness/actions/workflows/ci.yml)
+
 > Markdown 개발 표준을 **AI 에이전트가 읽고**, 컴포넌트·테스트를 **일관되게 생성**하는 프론트엔드 개발 하네스.
 
 AI 코드 생성은 빠르지만, 표준이 없으면 결과물이 사람마다·세션마다 제각각이 됩니다. 이 하네스는 **"AI가 따라야 할 규칙(Markdown)"** 과 **"그 규칙대로 생성·검증하는 파이프라인"** 을 코드로 고정해, 생성형 AI의 생산성을 *일관성 있게* 만드는 것을 목표로 합니다.
