@@ -10,7 +10,7 @@
   ```bash
   npm run scaffold -- <ComponentName>
   ```
-- 모든 컴포넌트는 **테스트를 동반**한다 (`standards/testing.md`).
+- 모든 컴포넌트는 **테스트**(`standards/testing.md`)와 **스토리**(CSF3, `standards/storybook.md`)를 동반한다.
 - 작업을 마치면 `npm test`와 `npm run typecheck`를 **통과**시킨다.
 - 커밋은 `standards/commit-conventions.md`를 따른다.
 

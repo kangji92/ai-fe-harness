@@ -34,7 +34,7 @@ if (!process.env.ANTHROPIC_API_KEY) {
 }
 
 // 개발 표준(Markdown)을 컨텍스트로 주입 — AGENTS.md의 "standards가 단일 진실 소스" 원칙.
-const standards = ["component-authoring", "testing"]
+const standards = ["component-authoring", "testing", "storybook"]
   .map((s) => `## ${s}\n${readFileSync(join(root, "standards", `${s}.md`), "utf8")}`)
   .join("\n\n");
 
@@ -45,7 +45,7 @@ const targetDir = join(root, "src", "components", name);
 const submitFilesTool = {
   name: "submit_files",
   description:
-    "생성한 컴포넌트 파일을 제출한다. <Name>.tsx, <Name>.test.tsx, index.ts 세 파일을 포함해야 한다.",
+    "생성한 컴포넌트 파일을 제출한다. <Name>.tsx, <Name>.test.tsx, <Name>.stories.tsx, index.ts 네 파일을 포함해야 한다.",
   input_schema: {
     type: "object",
     properties: {
@@ -70,9 +70,10 @@ const system = `당신은 이 저장소의 프론트엔드 개발 하네스에�
 아래 개발 표준을 반드시 준수해 React + TypeScript 컴포넌트와 Vitest + Testing Library 테스트를 생성한다.
 결과물은 반드시 submit_files 도구로 제출한다.
 
-- 파일은 <Name>.tsx, <Name>.test.tsx, index.ts 세 개.
+- 파일은 <Name>.tsx, <Name>.test.tsx, <Name>.stories.tsx, index.ts 네 개.
 - props는 명시적 인터페이스로 정의하고 any를 쓰지 않는다.
 - 테스트는 사용자 관점(role/label 쿼리)과 상호작용을 검증한다.
+- 스토리는 CSF3 형식으로 주요 상태·variant를 노출한다.
 
 # 개발 표준
 ${standards}`;

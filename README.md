@@ -23,6 +23,7 @@ ai-fe-harness/
 ├─ standards/             # Markdown 개발 표준 (single source of truth)
 │  ├─ component-authoring.md
 │  ├─ testing.md
+│  ├─ storybook.md
 │  ├─ commit-conventions.md
 │  └─ code-review.md
 ├─ prompts/               # 재사용 프롬프트 (컴포넌트·테스트·품질 루프)
@@ -48,7 +49,7 @@ ai-fe-harness/
 
 ```bash
 npm install
-npm run scaffold -- MyComponent   # 컴포넌트 + 테스트 + index 생성
+npm run scaffold -- MyComponent   # 컴포넌트 + 테스트 + 스토리(CSF3) + index 생성
 npm test                          # 검증
 ```
 
@@ -114,5 +115,5 @@ npm run quality-fix           # 대상 기본값: src
 
 - [x] 실행 에이전트 루프 (스펙 → 생성 → 테스트 → 자가수정)
 - [x] 품질 루프 (정적 분석 → AI 개선 → 재검증)
-- [ ] Storybook 스토리 자동 생성 템플릿
+- [x] Storybook 스토리 자동 생성 (CSF3 템플릿)
 - [ ] Playwright E2E 시나리오 생성 프롬프트
