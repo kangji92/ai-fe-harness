@@ -63,6 +63,9 @@ npm test                          # 검증
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
 npm run agent -- Badge "상태를 색상으로 표시하는 배지. variant: success | warning | danger."
+
+# API 키·비용 없이 흐름만 확인 (조립된 표준·프롬프트·도구 출력)
+npm run agent -- Badge "..." --dry-run
 ```
 
 내부 흐름:

@@ -2,8 +2,8 @@
 // AI Front-end Harness — 실행 에이전트 루프.
 // 스펙 → Claude 생성 → 파일 작성 → 테스트 → 실패 시 자가 수정 → 반복.
 //
-// 사용법: npm run agent -- <ComponentName> "<요구사항 설명>"
-// 필요:   ANTHROPIC_API_KEY 환경변수
+// 사용법: npm run agent -- <ComponentName> "<요구사항 설명>" [--dry-run]
+// 필요:   ANTHROPIC_API_KEY 환경변수 (--dry-run 시 불필요 — API 호출 없이 조립된 요청만 출력)
 //
 // 스캐폴더(scaffold.mjs)가 "표준을 강제하는 결정적 골격 생성"이라면,
 // 이 스크립트는 "표준을 읽고 요구사항까지 반영·검증하는 실행 에이전트"다.
@@ -18,17 +18,22 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const MODEL = "claude-opus-4-8";
 const MAX_ITERATIONS = 3;
 
-const name = process.argv[2];
-const spec = process.argv.slice(3).join(" ").trim();
+const rawArgs = process.argv.slice(2);
+const dryRun = rawArgs.includes("--dry-run") || process.env.AGENT_DRY_RUN === "1";
+const args = rawArgs.filter((a) => a !== "--dry-run");
+const name = args[0];
+const spec = args.slice(1).join(" ").trim();
 
 if (!name || !/^[A-Z][A-Za-z0-9]*$/.test(name) || !spec) {
-  console.error('사용법: npm run agent -- <ComponentName> "<요구사항 설명>"  (이름은 PascalCase)');
+  console.error(
+    '사용법: npm run agent -- <ComponentName> "<요구사항 설명>" [--dry-run]  (이름은 PascalCase)',
+  );
   process.exit(1);
 }
 
-if (!process.env.ANTHROPIC_API_KEY) {
+if (!dryRun && !process.env.ANTHROPIC_API_KEY) {
   console.error(
-    "ANTHROPIC_API_KEY 환경변수가 필요합니다. 예:\n  export ANTHROPIC_API_KEY=sk-ant-...",
+    "ANTHROPIC_API_KEY 환경변수가 필요합니다. (API 호출 없이 흐름만 보려면 --dry-run)\n  export ANTHROPIC_API_KEY=sk-ant-...",
   );
   process.exit(1);
 }
@@ -38,7 +43,6 @@ const standards = ["component-authoring", "testing", "storybook"]
   .map((s) => `## ${s}\n${readFileSync(join(root, "standards", `${s}.md`), "utf8")}`)
   .join("\n\n");
 
-const client = new Anthropic();
 const targetDir = join(root, "src", "components", name);
 
 // 파일 제출을 도구 호출로 강제 → 신뢰성 있는 구조화 출력.
@@ -78,12 +82,8 @@ const system = `당신은 이 저장소의 프론트엔드 개발 하네스에�
 # 개발 표준
 ${standards}`;
 
-const messages = [
-  {
-    role: "user",
-    content: `컴포넌트 이름: ${name}\n요구사항: ${spec}\n\n표준을 준수해 컴포넌트 + 테스트 + index를 만들고 submit_files로 제출하라.`,
-  },
-];
+const userContent = `컴포넌트 이름: ${name}\n요구사항: ${spec}\n\n표준을 준수해 컴포넌트 + 테스트 + 스토리 + index를 만들고 submit_files로 제출하라.`;
+const messages = [{ role: "user", content: userContent }];
 
 function writeFiles(files) {
   mkdirSync(targetDir, { recursive: true });
@@ -105,6 +105,21 @@ function runTests() {
     return { ok: false, output: `${e.stdout ?? ""}${e.stderr ?? ""}` };
   }
 }
+
+// --dry-run: API 호출 없이 하네스가 조립한 요청을 출력하고 종료 (비용 0).
+if (dryRun) {
+  console.log("=== DRY RUN — API 호출 없음 (비용 0) ===\n");
+  console.log(`대상:        src/components/${name}`);
+  console.log(`모델:        ${MODEL}`);
+  console.log(`주입 표준:   component-authoring · testing · storybook (총 ${standards.length.toLocaleString()}자)`);
+  console.log(`도구:        ${submitFilesTool.name} (필수 출력: <Name>.tsx · test · stories · index)`);
+  console.log(`\n--- 사용자 메시지 ---\n${userContent}`);
+  console.log(`\n--- 시스템 프롬프트 (조립됨, ${system.length.toLocaleString()}자) ---\n${system}`);
+  console.log(`\n▶ 실제 생성: ANTHROPIC_API_KEY 설정 후 --dry-run 없이 실행`);
+  process.exit(0);
+}
+
+const client = new Anthropic();
 
 for (let i = 1; i <= MAX_ITERATIONS; i++) {
   console.log(`\n[반복 ${i}/${MAX_ITERATIONS}] Claude(${MODEL})에 생성 요청...`);
