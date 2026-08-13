@@ -76,6 +76,37 @@ npm run agent -- Badge "..." --dry-run
 4. 실패하면 테스트 로그를 모델에 되돌려 **최대 3회까지 자가 수정**
 5. 통과하면 종료
 
+### 실행 예시 — `--dry-run` (API 호출 없음)
+
+```text
+$ npm run agent -- Badge "상태를 색상으로 표시하는 배지. variant: success | warning | danger, disabled 지원" --dry-run
+
+=== DRY RUN — API 호출 없음 (비용 0) ===
+
+대상:        src/components/Badge
+모델:        claude-opus-4-8
+주입 표준:   component-authoring · testing · storybook (총 1,952자)
+도구:        submit_files (필수 출력: <Name>.tsx · test · stories · index)
+
+--- 사용자 메시지 ---
+컴포넌트 이름: Badge
+요구사항: 상태를 색상으로 표시하는 배지. variant: success | warning | danger, disabled 지원
+
+표준을 준수해 컴포넌트 + 테스트 + 스토리 + index를 만들고 submit_files로 제출하라.
+
+--- 시스템 프롬프트 (조립됨, 2,301자) ---
+당신은 이 저장소의 프론트엔드 개발 하네스에서 동작하는 AI 에이전트다.
+아래 개발 표준을 반드시 준수해 React + TypeScript 컴포넌트와 Vitest + Testing Library 테스트를 생성한다.
+결과물은 반드시 submit_files 도구로 제출한다.
+...
+# 개발 표준
+## component-authoring
+# 컴포넌트 작성 표준
+...            ← standards/ 전체가 그대로 프롬프트에 주입됨
+
+▶ 실제 생성: ANTHROPIC_API_KEY 설정 후 --dry-run 없이 실행
+```
+
 > 표준(`standards/`) · 프롬프트 · 스캐폴더 · **실행 루프**가 한 저장소에서 맞물려,
 > "AI 코드 생성"을 문서가 아니라 **검증되는 파이프라인**으로 만든다.
 
