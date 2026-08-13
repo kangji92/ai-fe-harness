@@ -27,6 +27,7 @@ ai-fe-harness/
 ├─ templates/component/   # 표준을 반영한 스캐폴드 템플릿
 ├─ scripts/scaffold.mjs   # 표준을 강제하는 결정적 스캐폴더
 ├─ scripts/agent-generate.mjs  # 실행 에이전트 루프 (Claude 호출 → 생성 → 테스트 → 자가수정)
+├─ scripts/quality-fix.mjs     # 품질 루프 (ESLint 리포트 → AI 개선 → 재검증)
 ├─ src/components/        # 하네스 산출물 예시 (Button = 확장본 / Card = 원본 출력)
 └─ .github/workflows/     # CI — 생성된 테스트 자동 검증
 ```
@@ -70,6 +71,24 @@ npm run agent -- Badge "상태를 색상으로 표시하는 배지. variant: suc
 > 표준(`standards/`) · 프롬프트 · 스캐폴더 · **실행 루프**가 한 저장소에서 맞물려,
 > "AI 코드 생성"을 문서가 아니라 **검증되는 파이프라인**으로 만든다.
 
+## 품질 루프 (Quality Loop)
+
+정적 분석 리포트를 AI 개선 사이클로 연결한다. "리포트 → AI 개선 → 재검증"이 한 사이클.
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-...
+npm run quality-fix           # 대상 기본값: src
+```
+
+내부 흐름:
+
+1. `eslint <target> --format json`으로 지적을 수집
+2. 지적 + 대상 파일을 표준과 함께 Claude에 전달
+3. `apply_fixes` 도구로 개선된 파일을 받아 적용 (표준과 충돌하는 지적은 근거와 함께 보류)
+4. **다시 lint**해서 지적이 줄었는지 검증, 최대 3회 반복
+
+> SonarQube를 쓰는 파이프라인도 리포트 JSON을 같은 방식으로 넘기면 동일하게 동작한다.
+
 ## 이 하네스가 증명하는 것
 
 - **Markdown 기반 개발 표준 수립** — `standards/`, `AGENTS.md`
@@ -92,6 +111,6 @@ npm run agent -- Badge "상태를 색상으로 표시하는 배지. variant: suc
 ## 로드맵
 
 - [x] 실행 에이전트 루프 (스펙 → 생성 → 테스트 → 자가수정)
+- [x] 품질 루프 (정적 분석 → AI 개선 → 재검증)
 - [ ] Storybook 스토리 자동 생성 템플릿
 - [ ] Playwright E2E 시나리오 생성 프롬프트
-- [ ] SonarQube 리포트 → AI 개선 PR 자동화 스크립트
