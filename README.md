@@ -24,9 +24,11 @@ ai-fe-harness/
 │  ├─ component-authoring.md
 │  ├─ testing.md
 │  ├─ storybook.md
+│  ├─ e2e.md
 │  ├─ commit-conventions.md
 │  └─ code-review.md
-├─ prompts/               # 재사용 프롬프트 (컴포넌트·테스트·품질 루프)
+├─ prompts/               # 재사용 프롬프트 (컴포넌트·테스트·품질·E2E)
+├─ examples/e2e/          # 참고용 Playwright 스펙 (런타임 미설치)
 ├─ templates/component/   # 표준을 반영한 스캐폴드 템플릿
 ├─ scripts/scaffold.mjs   # 표준을 강제하는 결정적 스캐폴더
 ├─ scripts/agent-generate.mjs  # 실행 에이전트 루프 (Claude 호출 → 생성 → 테스트 → 자가수정)
@@ -116,4 +118,4 @@ npm run quality-fix           # 대상 기본값: src
 - [x] 실행 에이전트 루프 (스펙 → 생성 → 테스트 → 자가수정)
 - [x] 품질 루프 (정적 분석 → AI 개선 → 재검증)
 - [x] Storybook 스토리 자동 생성 (CSF3 템플릿)
-- [ ] Playwright E2E 시나리오 생성 프롬프트
+- [x] Playwright E2E 시나리오 생성 (표준 + 프롬프트 + 예시)

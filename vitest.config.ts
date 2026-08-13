@@ -5,7 +5,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./vitest.setup.ts"],
     globals: true,
-    // 템플릿(__NAME__ 플레이스홀더)은 테스트 대상에서 제외
-    exclude: [...configDefaults.exclude, "templates/**"],
+    // 템플릿(__NAME__)과 참고용 예시(Playwright 미설치)는 테스트 대상에서 제외
+    exclude: [...configDefaults.exclude, "templates/**", "examples/**"],
   },
 });
