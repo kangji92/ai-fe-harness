@@ -1,0 +1,26 @@
+{
+  "name": "ai-fe-harness",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "AI 기반 프론트엔드 개발 하네스 — Markdown 개발 표준을 AI 에이전트가 읽고 컴포넌트·테스트를 일관되게 생성한다.",
+  "scripts": {
+    "scaffold": "node scripts/scaffold.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "react": "^19",
+    "react-dom": "^19"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.4.0",
+    "@testing-library/react": "^16.1.0",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "jsdom": "^25.0.0",
+    "typescript": "^5",
+    "vitest": "^4"
+  }
+}
